@@ -1,0 +1,191 @@
+---
+title: "Accessing Data Through APIs in R"
+author: 
+  - name: "Alex Manos, M.S."
+    affiliation: "Pinellas County Division of Environmental Management" 
+date: "2025-08-26"
+format: 
+  revealjs:
+    controls: false
+    date-format: "MMMM D, YYYY"
+    theme: ["styles.scss"]
+    logo: images/pinellas_logo.png
+---
+
+## Finding Data Online
+
+- Data is everywhere online
+- Data can be found in many formats (excel, csv, text)
+- Usually data can be downloaded manually from a data providers webpage
+- This may not be the most efficient method though if the data is updated regularly
+and if the providers offers an **API**
+
+## What is an API?
+
+- An API (Application Programming Interface) is when one computer (client) interacts 
+with another (server).
+- The server receives a request, processes it, and returns a response.
+- We can use R to interact with APIs and retrieve data from providers.
+- R can be used to parse the data and return it in a tidy data format.
+
+![](images/api_model.png){.absolute top="400" left="150" width="580" height="235"}
+
+## Why use an API?
+
+- APIs allow us to access data and services from other applications or platforms
+- Removes the need to manually data download from the source
+- Can be automated to run on a schedule
+- Provides access to up-to-date data
+
+## API Terms
+
+  - **REST API**: Software architecture that uses HTTP requests to access and use data
+  - **HTTP Request**: Protocol for sending requests from client to server
+  - **Endpoint**: The URL where the API can be accessed
+  - **Parameters**: Filters or options you include in the request (dates, locations, etc.)
+  - **Authentication**: Some APIs require a key or token to access data
+  - **Response**: The data returned by the API, often in JSON or XML format
+  - **JSON**: JavaScript Object Notation, a lightweight data format
+
+  
+## Typical API Request Workflow
+
+```{=html}
+<div class="flowchart">
+  <div class="box fragment" data-fragment-index="1">Identify the API endpoint</div>
+  <div class="arrow fragment" data-fragment-index="1">&#8681;</div>
+  <div class="box fragment" data-fragment-index="2">Build the query (URL + parameters)</div>
+  <div class="arrow fragment" data-fragment-index="2">&#8681;</div>
+  <div class="box fragment" data-fragment-index="3">Make the request</div>
+  <div class="arrow fragment" data-fragment-index="3">&#8681;</div>
+  <div class="box fragment" data-fragment-index="4">Receive raw response</div>
+  <div class="arrow fragment" data-fragment-index="4">&#8681;</div>
+  <div class="box fragment" data-fragment-index="5">Use R to parse data</div>
+</div>
+```
+ 
+## R Packages for APIs
+
+- **httr2**: Send HTTP requests to an API
+- **xml2**: Parse XML responses into data frames
+- **jsonlite**: Parse JSON responses into data frames
+- **tidyverse**: Clean and manipulate the data
+
+:::{.fragment .fade-in}
+```{r, echo=TRUE, eval=FALSE}
+install.packages(c('httr2','xml','jsonlite','tidyverse'))
+```
+:::
+  
+## API Request Format
+
+Making a request to an API usually involves building a URL with the endpoint and 
+parameters so the server knows what data to return.
+
+- protocol: Tells the browser how to communicate with the server 
+- host: The domain name of the server hosting the resource
+- path: The location/endpoint of the API for the resource
+- query: Parameters to filter or specify the data you want
+
+
+![](images/url.png){.absolute top="445" left="150" width="820" height="130"}
+
+## Every API is Different
+
+- Each API has its own endpoints, parameters, and authentication methods
+- Always refer to the API documentation for details on how to use it
+- Documentation will provide examples of requests and responses
+- Some APIs require authentication (API keys, tokens) to access data
+
+## Example API: Advice Slip
+
+- The Advice Slip API provides random pieces of advice
+- No authentication required
+- Simple endpoint to retrieve advice
+
+[https://api.adviceslip.com](https://api.adviceslip.com/)
+
+Code along with the example or go to `api_test.R` to see finished code
+
+## Example API: Advice Slip (contd.)
+
+:::{.fragment .fade-in fragment-index=1}
+```{r, echo=TRUE}
+library(httr2)
+library(jsonlite)
+```
+:::
+
+:::{.fragment .fade-in fragment-index=2}
+```{r, echo=TRUE}
+# Define the API endpoint
+advice_url <- "https://api.adviceslip.com"
+```
+:::
+
+:::{.fragment .fade-in fragment-index=3}
+```{r, echo=TRUE}
+# Create a request to the API
+req <- request(advice_url)
+```
+:::
+
+:::{.fragment .fade-in fragment-index=4}
+```{r, echo=TRUE}
+# Show what will be sent to the server without actually sending it
+req |> 
+  req_dry_run()
+```
+:::
+
+:::{.fragment .fade-in fragment-index=5}
+```{r, echo=TRUE}
+# Add the query to the path and send the request
+resp <- req |>
+  req_url_path_append("advice") |>
+  req_perform()
+resp
+```
+:::
+
+## Example API: Advice Slip (contd.)
+
+:::{.fragment .fade-in fragment-index=1}
+```{r, echo=TRUE}
+class(resp)
+```
+:::
+
+:::{.fragment .fade-in fragment-index=2}
+```{r, echo=TRUE}
+names(resp)
+```
+:::
+
+:::{.fragment .fade-in fragment-index=3}
+```{r, echo=TRUE}
+resp$body
+```
+:::
+
+:::{.fragment .fade-in fragment-index=4}
+```{r, echo=TRUE}
+class(resp$body)
+```
+:::
+
+:::{.fragment .fade-in fragment-index=5}
+```{r, echo=TRUE}
+# Convert the raw characters into 
+body_json <- rawToChar(resp$body)
+body_json
+```
+:::
+
+## Example API: Advice Slip (contd.)
+
+
+
+## Example API: Advice Slip (contd.)
+
+

@@ -12,42 +12,57 @@ format:
     logo: images/pinellas_logo.png
 ---
 
+```{r}
+# Function for a countdown on the exercise slides:
+cntdn <- function(){
+  library(countdown)
+  countdown(
+    minutes = 10,
+    seconds = 0,
+    play_sound = TRUE,
+    top = "80%",
+    right = "50%",
+    font_size = "60px",
+    color_background = '#F04124',
+    color_border = '#F04124',
+    color_text = 'black'
+  )
+}
+```
+
 ## Finding Data Online
 
-- Data is everywhere online
-- Data can be found in many formats (excel, csv, text)
-- Usually data can be downloaded manually from a data providers webpage
-- This may not be the most efficient method though if the data is updated regularly
-and if the providers offers an **API**
+-   Data is everywhere online
+-   Data can be found in many formats (excel, csv, text)
+-   Usually data can be downloaded manually from a data providers webpage
+-   This may not be the most efficient method though if the data is updated regularly and if the providers offers an **API**
 
 ## What is an API?
 
-- An API (Application Programming Interface) is when one computer (client) interacts 
-with another (server).
-- The server receives a request, processes it, and returns a response.
-- We can use R to interact with APIs and retrieve data from providers.
-- R can be used to parse the data and return it in a tidy data format.
+-   An API (Application Programming Interface) is when one computer (client) interacts with another (server).
+-   The server receives a request, processes it, and returns a response.
+-   We can use R to interact with APIs and retrieve data from providers.
+-   R can be used to parse the data and return it in a tidy data format.
 
 ![](images/api_model.png){.absolute top="400" left="150" width="580" height="235"}
 
 ## Why use an API?
 
-- APIs allow us to access data and services from other applications or platforms
-- Removes the need to manually data download from the source
-- Can be automated to run on a schedule
-- Provides access to up-to-date data
+-   APIs allow us to access data and services from other applications or platforms
+-   Removes the need to manually data download from the source
+-   Can be automated to run on a schedule
+-   Provides access to up-to-date data
 
 ## API Terms
 
-  - **REST API**: Software architecture that uses HTTP requests to access and use data
-  - **HTTP Request**: Protocol for sending requests from client to server
-  - **Endpoint**: The URL where the API can be accessed
-  - **Parameters**: Filters or options you include in the request (dates, locations, etc.)
-  - **Authentication**: Some APIs require a key or token to access data
-  - **Response**: The data returned by the API, often in JSON or XML format
-  - **JSON**: JavaScript Object Notation, a lightweight data format
+-   **REST API**: Software architecture that uses HTTP requests to access and use data
+-   **HTTP Request**: Protocol for sending requests from client to server
+-   **Endpoint**: The URL where the API can be accessed
+-   **Parameters**: Filters or options you include in the request (dates, locations, etc.)
+-   **Authentication**: Some APIs require a key or token to access data
+-   **Response**: The data returned by the API, often in JSON or XML format
+-   **JSON**: JavaScript Object Notation, a lightweight data format
 
-  
 ## Typical API Request Workflow
 
 ```{=html}
@@ -63,82 +78,80 @@ with another (server).
   <div class="box fragment" data-fragment-index="5">Use R to parse data</div>
 </div>
 ```
- 
+
 ## R Packages for APIs
 
-- **httr2**: Send HTTP requests to an API
-- **xml2**: Parse XML responses into data frames
-- **jsonlite**: Parse JSON responses into data frames
-- **tidyverse**: Clean and manipulate the data
+-   **httr2**: Send HTTP requests to an API
+-   **xml2**: Parse XML responses into data frames
+-   **jsonlite**: Parse JSON responses into data frames
+-   **tidyverse**: Clean and manipulate the data
 
-:::{.fragment .fade-in}
+::: {.fragment .fade-in}
 ```{r, echo=TRUE, eval=FALSE}
-install.packages(c('httr2','xml','jsonlite','tidyverse'))
+install.packages(c('httr2','xml2','jsonlite','purrr','httpuv'))
 ```
 :::
-  
+
 ## API Request Format
 
-Making a request to an API usually involves building a URL with the endpoint and 
-parameters so the server knows what data to return.
+Making a request to an API usually involves building a URL with the endpoint and parameters so the server knows what data to return.
 
-- protocol: Tells the browser how to communicate with the server 
-- host: The domain name of the server hosting the resource
-- path: The location/endpoint of the API for the resource
-- query: Parameters to filter or specify the data you want
-
+-   protocol: Tells the browser how to communicate with the server
+-   host: The domain name of the server hosting the resource
+-   path: The location/endpoint of the API for the resource
+-   query: Parameters to filter or specify the data you want
 
 ![](images/url.png){.absolute top="445" left="150" width="820" height="130"}
 
 ## Every API is Different
 
-- Each API has its own endpoints, parameters, and authentication methods
-- Always refer to the API documentation for details on how to use it
-- Documentation will provide examples of requests and responses
-- Some APIs require authentication (API keys, tokens) to access data
+-   Each API has its own endpoints, parameters, and authentication methods
+-   Always refer to the API documentation for details on how to use it
+-   Documentation will provide examples of requests and responses
+-   Some APIs require authentication (API keys, tokens) to access data
 
 ## Example API: Advice Slip
 
-- The Advice Slip API provides random pieces of advice
-- No authentication required
-- Simple endpoint to retrieve advice
+-   The Advice Slip API provides random pieces of advice
+-   No authentication required
+-   Simple endpoint to retrieve advice
 
 [https://api.adviceslip.com](https://api.adviceslip.com/)
 
-Code along with the example or go to `api_test.R` to see finished code
 
 ## Example API: Advice Slip (contd.)
 
-:::{.fragment .fade-in fragment-index=1}
+::: {.fragment .fade-in fragment-index="1"}
 ```{r, echo=TRUE}
 library(httr2)
 library(jsonlite)
+library(httpuv)
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=2}
+::: {.fragment .fade-in fragment-index="2"}
 ```{r, echo=TRUE}
 # Define the API endpoint
 advice_url <- "https://api.adviceslip.com"
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=3}
+::: {.fragment .fade-in fragment-index="3"}
 ```{r, echo=TRUE}
 # Create a request to the API
 req <- request(advice_url)
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=4}
+::: {.fragment .fade-in fragment-index="4"}
 ```{r, echo=TRUE}
 # Show what will be sent to the server without actually sending it
-req |> 
+req |>
   req_dry_run()
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=5}
+::: {.fragment .fade-in fragment-index="5"}
 ```{r, echo=TRUE}
 # Add the query to the path and send the request
 resp <- req |>
@@ -150,33 +163,33 @@ resp
 
 ## Example API: Advice Slip (contd.)
 
-:::{.fragment .fade-in fragment-index=1}
+::: {.fragment .fade-in fragment-index="1"}
 ```{r, echo=TRUE}
 class(resp)
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=2}
+::: {.fragment .fade-in fragment-index="2"}
 ```{r, echo=TRUE}
 names(resp)
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=3}
+::: {.fragment .fade-in fragment-index="3"}
 ```{r, echo=TRUE}
 resp$body
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=4}
+::: {.fragment .fade-in fragment-index="4"}
 ```{r, echo=TRUE}
 class(resp$body)
 ```
 :::
 
-:::{.fragment .fade-in fragment-index=5}
+::: {.fragment .fade-in fragment-index="5"}
 ```{r, echo=TRUE}
-# Convert the raw characters into 
+# Convert the raw characters into
 body_json <- rawToChar(resp$body)
 body_json
 ```
@@ -184,8 +197,282 @@ body_json
 
 ## Example API: Advice Slip (contd.)
 
+::: {.fragment .fade-in fragment-index="1"}
+```{r, echo=TRUE}
+# Convert the raw vector into text
+slip_advice <- fromJSON(body_json)
+slip_advice
+```
+:::
 
+::: {.fragment .fade-in fragment-index="2"}
+```{r, echo=TRUE}
+class(slip_advice)
+```
+:::
+
+::: {.fragment .fade-in fragment-index="3"}
+```{r, echo=TRUE}
+# Extract the advice string from the list
+slip_advice$slip$advice
+```
+:::
+
+::: {.fragment .fade-in fragment-index="4"}
+```{r, echo=TRUE}
+# We can also extract the response as a string, which is a more straightforward
+# way of getting the data
+resp |>
+  resp_body_string()
+```
+:::
 
 ## Example API: Advice Slip (contd.)
 
+::: {.fragment .fade-in fragment-index="1"}
+```{r, echo=TRUE}
+# Now parse the JSON text from the string
+resp |>
+  resp_body_string() |>
+  fromJSON()
+```
+:::
 
+::: {.fragment .fade-in fragment-index="2"}
+```{r, echo=TRUE}
+resp_advice_id5 <- req |>
+  req_url_path_append("advice/5") |>
+  req_perform()
+resp_advice_id5
+```
+:::
+
+::: {.fragment .fade-in fragment-index="3"}
+```{r, echo=TRUE}
+advice_id5 <- resp_advice_id5 |>
+  resp_body_string() |>
+  fromJSON()
+advice_id5$slip$advice
+```
+:::
+
+## USGS NAS API
+
+-   USGS provides an API for nonindigenous aquatic species (NAS) data.
+-   Spatially referenced data on NAS species precense.
+-   Species, lat/long, obs. date
+
+[https://nas.er.usgs.gov/api/documentation.aspx](https://nas.er.usgs.gov/api/documentation.aspx)
+
+## USGS NAS API (contd.)
+
+::: {.fragment .fade-in fragment-index="1"}
+```{r, echo=TRUE}
+library(purrr)
+nasAPI <- 'http://nas.er.usgs.gov/api/v2/occurrence'
+```
+:::
+
+::: {.fragment .fade-in fragment-index="2"}
+```{r, echo=TRUE}
+nasReq <- request(nasAPI) |>
+  req_url_path_append("search") |>
+  req_url_query(
+    state = "FL",
+    county = "Pinellas"
+  ) |>
+  req_perform()
+```
+:::
+
+::: {.fragment .fade-in fragment-index="3"}
+```{r, echo=TRUE}
+nasData <- nasReq$body |>
+  rawToChar() |>
+  fromJSON()
+names(nasData)
+```
+:::
+
+::: {.fragment .fade-in fragment-index="4"}
+```{r, echo=TRUE}
+str(nasData$results)
+```
+:::
+
+## Your Turn {background-color="#ffeeee"}
+
+1)  Install and load the packages `httr2`, `jsonlite`, using the `install.packages()` 
+and `library()` functions if not done already
+
+2)  Use the USGS NAS API to request data for your county
+
+3)  Read the documentation to see the available options for the "group" parameter
+and set the query to one of those values
+
+4) Send the request and inspect the results
+
+```{r}
+cntdn()
+```
+
+
+## FDEP WIN API
+
+-   Florida Department of Environmental Protection (FDEP) provides an API for accessing water quality data.
+-   DEP API webpage has parameters options that you can set
+-   Need to know organization ID used when submitting WIN reports
+
+DEP API Documentation <https://prodapps.dep.state.fl.us/dear-watershed/swagger-ui/index.html#/>
+
+## FDEP WIN API - orgID
+
+-   If you dont know your organization ID or you want to find another organizations ID go to the FDEP WIN webpage
+
+<https://prodenv.dep.state.fl.us/DearWin/public/welcomeGeneralPublic?calledBy=GENERALPUBLIC>
+
+Reprts & Extracts \> WAVES \> Organization and Contact \> Organization Name \> Deselect all \> Choose your org and hit the "\>\>" button \> Done \> use the code that populates the Organization ID box
+
+## FDEP WIN API
+
+::: {.fragment .fade-in fragment-index="1"}
+```{r, echo=TRUE}
+library(httr2)
+library(jsonlite)
+library(dplyr)
+
+# Define the API url
+url <- 'https://prodapps.dep.state.fl.us/dear-watershed'
+```
+:::
+
+::: {.fragment .fade-in fragment-index="2"}
+```{r, echo=TRUE}
+# Make the request to the API with the specified parameters
+resp <- httr2::request(url) |>
+  httr2::req_url_path_append('result-activities') |>
+  httr2::req_url_query(
+    `ActivityStartDateFrom (>=)` = '2024-03-11',
+    `ActivityStartDateTo (<=)` = '2024-03-15',
+    `Organization ID` = '21FLPDEM',
+    page = 0,
+    size = 500,
+    sort = 'resultKey,ASC'
+  ) |>
+  httr2::req_perform()
+resp
+```
+:::
+
+## FDEP WIN API
+
+::: {.fragment .fade-in fragment-index="1"}
+```{r, echo=TRUE}
+# Parse the response
+depResp <- resp$body |>
+  rawToChar() |>
+  jsonlite::fromJSON()
+names(depResp)
+```
+:::
+
+::: {.fragment .fade-in fragment-index="2"}
+```{r, echo=TRUE}
+str(depResp$content)
+```
+:::
+
+## FDEP WIN API
+
+-   Check API webpage for more parameters that can be set
+-   API calls limited to 500 results returned per page
+-   Need to contact WIN administrator to schedule large dataset extractions
+
+::: {.fragment .fade-in}
+...or we can run a loop on the page numbers
+:::
+
+
+## FDEP WIN API 
+
+```{r, echo=TRUE,`code-line-numbers`="1-3|5-6|7-18|20-23|25-31|33-34"}
+# Initialize an empty list to fill and set the initial page number
+allResults <- list()
+page <- 0
+
+# Start while loop so the page number will increase until no data is returned 
+while (TRUE) {
+  # Start the request
+  resp <- httr2::request(url) |>
+    httr2::req_url_path_append('result-activities') |>
+    httr2::req_url_query(
+      `ActivityStartDateFrom (>=)` = '2024-03-11',
+      `ActivityStartDateTo (<=)` = '2024-03-15',
+      `Organization ID` = '21FLPDEM',
+      page = page,
+      size = 500,
+      sort = 'resultKey,ASC'
+    ) |>
+    httr2::req_perform()
+  
+  # Parse the response
+  depResp <- resp$body |>
+    rawToChar() |>
+    jsonlite::fromJSON() 
+  
+  # Check if data is returned from the request and if not, stop the loop,
+  # otherwise add the results to the empty list
+  if (is.null(nrow(depResp$content))) {
+    break
+  } else {
+    allResults <- append(allResults, list(depResp$content))
+  }
+  
+  # Increase the page number
+  page <- page + 1
+}
+```
+
+## FDEP WIN API
+
+```{r, echo=TRUE}
+# Combine all the reults
+df <- bind_rows(allResults)
+str(df)
+```
+
+Notice that we used the same time frame from when we called the API without our 
+loop and got 500 obs., now we have 809!
+
+
+## Recap
+
+-   APIs allow users to access provider data programatically
+-   `httr2` and `jsonlite` packages let you access and parse data
+-   Inspect API documentation to find parameters names
+-   Be aware of API keys and keep yours secure
+
+## Thank you!
+
+```{=html}
+<!-- You have to type 'quarto add quarto-ext/fontawesome' into the terminal
+to download the fontawesome extension for this to work-->
+```
+
+::::: columns
+::: column
+<br>
+
+{{< fa file-powerpoint >}} [rpubs.com/aman11/flms_r_workshop_2025](https://rpubs.com/aman11/flms_r_workshop_2025)
+
+{{< fa brands github >}} [PCDEM/R_api_workshop](https://github.com/PCDEM/R_api_workshop)
+
+{{< fa brands linkedin >}} [alex-manos](https://www.linkedin.com/in/alex-manos-228115113/)
+
+{{< fa envelope >}} [almanos\@pinellas.gov](mailto:almanos@pinellas.gov)
+:::
+
+::: column
+![](images/pres_qr.png){.absolute top="125" left="550" width="380" height="380"}
+:::
+:::::

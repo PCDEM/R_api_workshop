@@ -6,14 +6,13 @@
 
 
 # Install relevant packages
-install.packages(c('httr2','xml2','jsonlite','dplyr','httpuv'))
+install.packages(c('httr2', 'jsonlite', 'dplyr'))
 
 #----------Advice Slip API-------------
 
 # load packages
 library(httr2)
 library(jsonlite)
-library(httpuv)
 
 # Define the API endpoint
 advice_url <- "https://api.adviceslip.com"
@@ -91,7 +90,7 @@ nasReq <- request(nasAPI) |>
 # Parse the API response and pull the results from the list
 nasData <- nasReq$body |>
   rawToChar() |>
-  fromJSON() |>
+  fromJSON() 
   
 # Check the names of the response to see what the name of the data is
 names(nasData)
